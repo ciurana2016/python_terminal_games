@@ -82,10 +82,15 @@ class GameEngine(object):
                 self.textures[texture]['code']
             )
     
-    def paint_object(self, obj):
+    def paint_object(self, obj, texture=False):
         color = obj['color']
         for pixel in obj['pixels']:
-            self.paint_pixel(pixel[0], pixel[1], color)
+            self.paint_pixel(pixel[0], pixel[1], color, texture)
+
+    def paint_background(self, color=False, texture=False):
+        for y in range(self.max_y + 1):
+            for x in range(self.max_x + 1):
+                self.paint_pixel(x, y, color, texture)
 
     def fix_xy(self, x, y):
         new_y = self.max_y - y
@@ -127,18 +132,23 @@ def main(c):
         'color': 'skyblue'
     })
     # Paint background 
-    # Move structures
-    # Save structures position to get collisions
+    # Move objects (+-x, +-y) remove part of object that gets out of screen
+    #   if full object out of screen delete it, and update for colision
+    # Save structures position to get colisions
     # user input
 
     # Intinite loop
     while True:
+        # [1] Paint background
+        ge.paint_background(texture='sky')
+        # [2] Paint anything else
         ge.paint_pixel(0, 0, 'red')   # Bottom
         ge.paint_pixel(0, ge.max_y, 'green')  # Top
         ge.paint_pixel(ge.max_x, 0, 'blue')  # Right
         ge.paint_pixel(ge.max_x, ge.max_y, 'white') # Right Top
+        # ge.paint_object(obstacle_object, texture='sky')
         ge.paint_object(obstacle_object)
-        ge.paint_pixel(20, 20, texture='sky')
+        #ge.paint_pixel(20, 20, texture='sky')
         ge.loop()
 
 

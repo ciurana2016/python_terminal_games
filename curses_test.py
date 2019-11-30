@@ -9,7 +9,7 @@ def main(c):
     curses.curs_set(0)
 
     curses.init_pair(1, curses.COLOR_RED, curses.COLOR_YELLOW)
-
+    
     h, w = c.getmaxyx()
     test_text = 'Hola mundo'
 

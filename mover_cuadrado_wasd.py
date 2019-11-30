@@ -20,8 +20,7 @@ ancho = int(ancho)
 LOOP_TIME = 0.10
 
 UI_BLACK = u'\u2588'
-UI_WHITE = u' '
-#UI_WHITE = u'\u2591'
+UI_WHITE = u'\u2591'
 
 
 def print_with_player_input():

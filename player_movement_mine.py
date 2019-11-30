@@ -47,6 +47,8 @@ def color_screen(c, color, key, player_x, player_y):
             c.attron(color)
             c.addstr(point[1], point[0], u'\u2591')
     c.refresh()
+    c.attroff(player_color)
+    c.attroff(color)
     
     return [player_x, player_y]
 
@@ -74,7 +76,7 @@ def main(c):
         player_xy = color_screen(c, purple, key, player_x, player_y)
         player_x = player_xy[0]
         player_y = player_xy[1]
-        time.sleep(.01)
+        time.sleep(.10)
 
 
 if __name__ == '__main__':

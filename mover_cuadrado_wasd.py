@@ -17,7 +17,7 @@ alto, ancho = os.popen('stty size', 'r').read().split()
 alto = int(alto)
 ancho = int(ancho)
 
-LOOP_TIME = 0.10
+LOOP_TIME = 0.05
 
 UI_BLACK = u'\u2588'
 UI_WHITE = u'\u2591'

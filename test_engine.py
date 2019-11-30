@@ -14,7 +14,7 @@ SAVE_PRINT = True
 
 class GameEngine(object):
 
-    GAME_TICK_TIME = .10
+    GAME_TICK_TIME = .025
     PIXEL = u'\u2588'           # PIXEL => █
     COLOR_COUNT = 0             # Index for colors
 
@@ -116,12 +116,12 @@ def main(c):
     obstacle_object = {
         'color': 'green',
         'pixels': [
-            [9, 5], [10, 5], [11, 5], [12, 5],
-                    [10, 4], [11, 4],
-                    [10, 3], [11, 3],
-                    [10, 2], [11, 2],
-                    [10, 1], [11, 1],
-                    [10, 0], [11, 0],
+            [ge.max_x - 1, 5], [ge.max_x - 2, 5], [ge.max_x - 3, 5], [ge.max_x - 4, 5],
+                    [ge.max_x - 2, 4], [ge.max_x - 3, 4],
+                    [ge.max_x - 2, 3], [ge.max_x - 3, 3],
+                    [ge.max_x - 2, 2], [ge.max_x - 3, 2],
+                    [ge.max_x - 2, 1], [ge.max_x - 3, 1],
+                    [ge.max_x - 2, 0], [ge.max_x - 3, 0],
         ]
     }
     # Different textures
@@ -132,10 +132,14 @@ def main(c):
         'color': 'skyblue'
     })
     # Paint background 
+    # -- DONE
     # Move objects (+-x, +-y) remove part of object that gets out of screen
     #   if full object out of screen delete it, and update for colision
     # Save structures position to get colisions
     # user input
+    # User is few pixels
+    # User can jump
+    # User can shoot
 
     # Intinite loop
     while True:
@@ -148,6 +152,9 @@ def main(c):
         ge.paint_pixel(ge.max_x, ge.max_y, 'white') # Right Top
         # ge.paint_object(obstacle_object, texture='sky')
         ge.paint_object(obstacle_object)
+        # Move object
+        # for pixel in obstacle_object['pixels']:
+        #     pixel[0] = pixel[0] - 1
         #ge.paint_pixel(20, 20, texture='sky')
         ge.loop()
 

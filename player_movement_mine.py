@@ -76,7 +76,7 @@ def main(c):
         player_xy = color_screen(c, purple, key, player_x, player_y)
         player_x = player_xy[0]
         player_y = player_xy[1]
-        time.sleep(.10)
+        time.sleep(.05)
 
 
 if __name__ == '__main__':

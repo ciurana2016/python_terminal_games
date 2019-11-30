@@ -22,6 +22,7 @@ class GameEngine(object):
         self.c = c
         self.initial_config()
         self.colors = {}
+        self.textures = {}
 
     def initial_config(self):
         # Disable cursor
@@ -60,10 +61,26 @@ class GameEngine(object):
             curses.color_pair(self.colors[name])
         )
 
-    def paint_pixel(self, x, y, color):
+    def create_texture(self, texture):
+        self.textures[texture['name']] = {
+            'code': texture['code'],
+            'color': texture['color']
+        }
+
+    def paint_pixel(self, x, y, color=False, texture=False):
         x, y = self.fix_xy(x, y)
-        self.use_color(color)
-        self.c.addstr(y, x, self.PIXEL)
+        if not texture:
+            self.use_color(color)
+            self.c.addstr(y, x, self.PIXEL)
+        else:
+            self.use_color(
+                self.textures[texture]['color']
+            )
+            self.c.addstr(
+                y,
+                x,
+                self.textures[texture]['code']
+            )
     
     def paint_object(self, obj):
         color = obj['color']
@@ -86,6 +103,7 @@ def main(c):
     ge.create_rgb_color('red', 255, 0, 0)
     ge.create_rgb_color('green', 0, 255, 0)
     ge.create_rgb_color('blue', 0, 0, 255)
+    ge.create_rgb_color('skyblue', 200, 200, 255)
     ge.create_rgb_color('white', 255, 255, 255)
     # Use the colors on the paint_pixel
     # -- DONE
@@ -93,15 +111,22 @@ def main(c):
     obstacle_object = {
         'color': 'green',
         'pixels': [
-            [9, 5],  [10, 5], [11, 5], [12, 5],
-            [10, 4], [11, 4],
-            [10, 3], [11, 3],
-            [10, 2], [11, 2],
-            [10, 1], [11, 1],
-            [10, 0], [11, 0],
+            [9, 5], [10, 5], [11, 5], [12, 5],
+                    [10, 4], [11, 4],
+                    [10, 3], [11, 3],
+                    [10, 2], [11, 2],
+                    [10, 1], [11, 1],
+                    [10, 0], [11, 0],
         ]
     }
     # Different textures
+    # -- DONE
+    ge.create_texture({
+        'name': 'sky',
+        'code': u'\u2591',
+        'color': 'skyblue'
+    })
+    # Paint background 
     # Move structures
     # Save structures position to get collisions
     # user input
@@ -113,6 +138,7 @@ def main(c):
         ge.paint_pixel(ge.max_x, 0, 'blue')  # Right
         ge.paint_pixel(ge.max_x, ge.max_y, 'white') # Right Top
         ge.paint_object(obstacle_object)
+        ge.paint_pixel(20, 20, texture='sky')
         ge.loop()
 
 

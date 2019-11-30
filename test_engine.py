@@ -65,6 +65,11 @@ class GameEngine(object):
         self.use_color(color)
         self.c.addstr(y, x, self.PIXEL)
     
+    def paint_object(self, obj):
+        color = obj['color']
+        for pixel in obj['pixels']:
+            self.paint_pixel(pixel[0], pixel[1], color)
+
     def fix_xy(self, x, y):
         new_y = self.max_y - y
         return x, new_y
@@ -85,7 +90,20 @@ def main(c):
     # Use the colors on the paint_pixel
     # -- DONE
     # Make "structures", and background
+    obstacle_object = {
+        'color': 'green',
+        'pixels': [
+            [9, 5],  [10, 5], [11, 5], [12, 5],
+            [10, 4], [11, 4],
+            [10, 3], [11, 3],
+            [10, 2], [11, 2],
+            [10, 1], [11, 1],
+            [10, 0], [11, 0],
+        ]
+    }
+    # Different textures
     # Move structures
+    # Save structures position to get collisions
     # user input
 
     # Intinite loop
@@ -94,6 +112,7 @@ def main(c):
         ge.paint_pixel(0, ge.max_y, 'green')  # Top
         ge.paint_pixel(ge.max_x, 0, 'blue')  # Right
         ge.paint_pixel(ge.max_x, ge.max_y, 'white') # Right Top
+        ge.paint_object(obstacle_object)
         ge.loop()
 
 

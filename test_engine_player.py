@@ -99,86 +99,64 @@ class GameEngine(object):
         new_y = self.max_y - y
         return x, new_y
 
+    def paint_player(self, player):
+        for y in range(player['dimensions'][1]):
+            for x in range(player['dimensions'][0]):
+                self.use_color('white')
+                self.c.addstr(
+                    self.max_y - y,
+                    x,
+                    player['style'][-(y+1)][x]
+                )
 
 def main(c):
 
     # Create game
     ge = GameEngine(c)
 
-    # TODO
     # Set colors
-    # -- DONE
-    ge.create_rgb_color('red', 255, 0, 0)
-    ge.create_rgb_color('green', 0, 255, 0)
-    ge.create_rgb_color('blue', 0, 0, 255)
-    ge.create_rgb_color('skyblue', 200, 200, 255)
     ge.create_rgb_color('white', 255, 255, 255)
-    # Use the colors on the paint_pixel
-    # -- DONE
-    # Make "structures", and background
-    obstacle_object = {
-        'color': 'green',
-        'pixels': [
-            [ge.max_x - 1, 5], [ge.max_x - 2, 5], [ge.max_x - 3, 5], [ge.max_x - 4, 5],
-                    [ge.max_x - 2, 4], [ge.max_x - 3, 4],
-                    [ge.max_x - 2, 3], [ge.max_x - 3, 3],
-                    [ge.max_x - 2, 2], [ge.max_x - 3, 2],
-                    [ge.max_x - 2, 1], [ge.max_x - 3, 1],
-                    [ge.max_x - 2, 0], [ge.max_x - 3, 0],
-        ]
-    }
-    # Different textures
-    # -- DONE
-    ge.create_texture({
-        'name': 'sky',
-        'code': u'\u2591',
-        'color': 'skyblue'
-    })
-    # Paint background 
-    # -- DONE
-    # Move objects (+-x, +-y) remove part of object that gets out of screen
-    #   if full object out of screen delete it, and update for colision
-    # Save structures position to get colisions
-    # user input
-    # User is few pixels
-    # User can jump
-    # User can shoot
+    ge.create_rgb_color('black', 0, 0, 0)
 
-    #_  PLAY MOV VARS ________ Has to jump and go up faster than down
-    player_jumped = False
-    player_jump_time = 0
-    player_position = [20, 20]
-    # _______________________
+    # Background texture
+    ge.create_texture({
+        'name': 'background',
+        'code': u' ',
+        'color': 'black'
+    })
+
+    # Create the player object
+    #  ▗ 
+    # /▒▒▒\▛
+    #` ░░
+    #  ▏▏
+    player_object = {
+        'name': 'player',
+        'dimensions': [6, 4],
+        'style': [
+            [' ', ' ', u'\u2597', ' ', ' ', ' ',],
+            [' ', '/', u'\u2592', u'\u2592', '\\', u'\u259B',],
+            ['', ' ', u'\u2591', u'\u2591', ' ', ' ',],
+            [' ', ' ', u'\u258F', u'\u258F', ' ', ' '],
+        ],
+        'x': 0,
+        'y': 0
+    }
     
     # Intinite loop
     while True:
         # [1] Paint background
-        ge.paint_background(texture='sky')
-        # [2] Paint anything else
-        ge.paint_pixel(0, 0, 'red')   # Bottom
-        ge.paint_pixel(0, ge.max_y, 'green')  # Top
-        ge.paint_pixel(ge.max_x, 0, 'blue')  # Right
-        ge.paint_pixel(ge.max_x, ge.max_y, 'white') # Right Top
-        # ge.paint_object(obstacle_object, texture='sky')
-        ge.paint_object(obstacle_object)
-        # __________________ PLAY MOVMNT jump
-        ge.paint_pixel(player_position[0], player_position[1], 'green')
-        key = c.getch()
-        try:
-            if key == curses.KEY_MOUSE:
-                click = curses.getmouse()
-                click_x = str(click[1])
-                click_y = str(click[2])
-                c.addstr(19, 19, click_x)
-                c.addstr(19, 20, click_y)
-                c.addstr(18, 18, str(click))
+        ge.paint_background(texture='background')
 
-            else:
-                key = chr(key)
-                c.addstr(17, 19, key)
-        except:
-            key = ''
-        # _____________________
+        # [2] Paint anything else
+        ge.paint_pixel(19, 19, 'white')
+
+        # [Paint anything that interacts with player (for collision)]
+
+        # [Try painting the player]
+        ge.paint_player(player_object)
+        
+        # [LAST] Loop the game
         ge.loop()
 
 

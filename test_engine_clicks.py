@@ -27,10 +27,11 @@ class GameEngine(object):
     def initial_config(self):
         # Disable cursor
         curses.curs_set(0)
+        # Mouse
+        curses.mousemask(1)
         # Start without user action
         self.c.nodelay(1)
         # Colors
-        #curses.use_default_colors()
         curses.start_color()
         # Set max X and Y
         y, x = self.c.getmaxyx()
@@ -130,7 +131,7 @@ def main(c):
     # -- DONE
     ge.create_texture({
         'name': 'sky',
-        'code': u'\u2591',
+        'code': u' ',
         'color': 'skyblue'
     })
     # Paint background 
@@ -164,31 +165,19 @@ def main(c):
         ge.paint_pixel(player_position[0], player_position[1], 'green')
         key = c.getch()
         try:
-            key = chr(key)
+            if key == curses.KEY_MOUSE:
+                click = curses.getmouse()
+                click_x = str(click[1])
+                click_y = str(click[2])
+                c.addstr(19, 19, click_x)
+                c.addstr(19, 20, click_y)
+                c.addstr(18, 18, str(click))
+
+            else:
+                key = chr(key)
+                c.addstr(17, 19, key)
         except:
             key = ''
-
-        # Player presses jump
-        if key == ' ':
-            #ge.paint_pixel(30, 20, 'red')
-            player_jumped = True
-
-        # Calculate player position (for next frame)
-        if player_jumped:
-            player_position[1] += 2
-            player_jump_time += 1
-        else:
-            player_position[1] -= 1
-
-        if player_jump_time == 3:
-            player_jump_time = 0
-            player_jumped = False
-
-        # for pixel in obstacle_object['pixels']:
-        #     pixel[0] = pixel[0] - 1
-
-
-        #c.addstr(17, 19, key)
         # _____________________
         ge.loop()
 

@@ -15,7 +15,7 @@ SAVE_PRINT = True
 
 class GameEngine(object):
 
-    GAME_TICK_TIME = .25
+    GAME_TICK_TIME = .001
     PIXEL = u'\u2588'           # PIXEL => █
     COLOR_COUNT = 0             # Index for colors
 
@@ -107,6 +107,7 @@ class MazeMaker(object):
         self.stack = []
         self.visited = 0
         self.max_visited = self.max_y * self.max_x
+        self.matrix = []
         self.make_matrix_start()
         self.choice_count = 0
 
@@ -121,7 +122,6 @@ class MazeMaker(object):
             Matrix point
                 x, y, visited, pixel content
         """
-        self.matrix = []
         for y in range(self.max_y):
             for x in range(self.max_x):
                 self.matrix.append([x, y, False, ''])
@@ -134,19 +134,26 @@ class MazeMaker(object):
             [point[0], point[1] -1]  # 3 Down
         ]
 
-        # Exceptions of screen
-        # Cant go more down
+
         if point[1] == 0:
             del posibles[3]
-        # Cant go more up
-        if point[1] == self.max_y:
-            del posibles[1]
-        # Cant go more right
-        if point[0] == self.max_x:
-            del posibles[2]
-        # Cant go more left
-        if point[0] == 0:
-            del posibles[0]
+
+        for p in posibles:
+            try:
+                if p[1] < 0 or p[0] < 0:
+                    posibles.remove(p)
+                # if p[0] > (self.max_x + 40):      # Cant go more right
+                #     posibles.remove(p)
+                # if p[1] > (self.max_y ):      # Cant go more up
+                    posibles.remove(p)
+            except ValueError:
+                # Delete 2 times
+                pass
+
+        # Neighbor is self  
+        for p in posibles:
+            if p[0] == point[0] and p[1] == point[1]:
+                posibles.remove(p)
 
         # Exceptions of already visted
         for m in self.matrix:
@@ -157,6 +164,12 @@ class MazeMaker(object):
 
         return posibles
 
+    def fill_choices(self):
+        for m in self.matrix:
+            if m[2] == False:
+                m[2] = True
+                m[3] = '#'
+
     def generate_maze(self):
 
         # Start
@@ -164,18 +177,37 @@ class MazeMaker(object):
         self.matrix[0][3] = '±'
         self.stack_push(self.matrix[0])
         self.choice_count += 1
+        old_neighbors = ''
+        N = 0
 
         while self.choice_count != self.max_visited:
 
+            N += 1
+
             # Get stack top
-            point = self.stack[-1]
+            try:
+                point = self.stack[-1]
+            except IndexError:
+                # Nothing in stack but posible choices
+                self.fill_choices()
+                break
 
             # Neighbors of point
             neighbors = self.get_neighbors(point)
 
+            if neighbors != old_neighbors:
+                old_neighbors = neighbors
+            else:
+                self.stack_pop()
+                #self.ge.c.addstr(0, 0, str(neighbor) + '             POP XX           ')
+                self.ge.loop()
+                continue
+
             # If no neighbors backtrack
             if len(neighbors) == 0:
                 self.stack_pop()
+                #self.ge.c.addstr(0, 0, str(neighbor) + '             POP            ')
+                self.ge.loop()
                 continue
     
             # Choose a random neighbor (path)
@@ -200,13 +232,13 @@ class MazeMaker(object):
                         m[2] = True
                         m[3] = '#'
                         self.ge.paint_pixel(m[0], m[1], 'red')
-                        # self.stack_push(m)
                         self.choice_count += 1
                         break
             except IndexError:
+                # Cant choose another random element
                 pass
 
-            self.ge.c.addstr(0, 0, str(neighbor))
+            #self.ge.c.addstr(0, 0, str(point) + ' %s' % str(N) + str(neighbors)+ 'max_x =' + str(self.max_x) + ', max_y' + str(self.max_y))
             self.ge.loop()
 
 
@@ -217,7 +249,7 @@ def main(c):
     ge = GameEngine(c)
 
     # MazeMaker
-    mm = MazeMaker(ge.max_x, ge.max_y, ge)
+    mm = MazeMaker(ge.max_x -2, ge.max_y - 1, ge)
 
     # Set colors
     ge.create_rgb_color('red', 255, 0, 0)
@@ -226,9 +258,12 @@ def main(c):
     mm.generate_maze()
 
     # Intinite loop
-    # while True:
-    #     # ge.paint_pixel(0, 0, 'red')   # Bottom
-    #     ge.loop()
+    while True:
+        # ge.paint_pixel(0, 0, 'red')   # Bottom
+        for m in mm.matrix:
+            ge.paint_pixel(m[0], m[1], 'red' if m[3] == '#' else 'green')
+
+        ge.loop()
 
 
 if __name__ == '__main__':

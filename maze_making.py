@@ -15,7 +15,7 @@ SAVE_PRINT = True
 
 class GameEngine(object):
 
-    GAME_TICK_TIME = .001
+    GAME_TICK_TIME = .0025
     PIXEL = u'\u2588'           # PIXEL => █
     COLOR_COUNT = 0             # Index for colors
 
@@ -249,7 +249,7 @@ def main(c):
     ge = GameEngine(c)
 
     # MazeMaker
-    mm = MazeMaker(ge.max_x -2, ge.max_y - 1, ge)
+    mm = MazeMaker(ge.max_x + 1, ge.max_y + 1, ge)
 
     # Set colors
     ge.create_rgb_color('red', 255, 0, 0)

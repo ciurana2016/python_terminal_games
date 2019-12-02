@@ -150,11 +150,6 @@ class MazeMaker(object):
                 # Delete 2 times
                 pass
 
-        # Neighbor is self  
-        for p in posibles:
-            if p[0] == point[0] and p[1] == point[1]:
-                posibles.remove(p)
-
         # Exceptions of already visted
         for m in self.matrix:
             if m[2] == True:

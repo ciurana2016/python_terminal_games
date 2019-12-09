@@ -15,7 +15,7 @@ SAVE_PRINT = True
 
 class GameEngine(object):
 
-    GAME_TICK_TIME = .0025
+    GAME_TICK_TIME = .001
     PIXEL = u'\u2588'           # PIXEL => █
     COLOR_COUNT = 0             # Index for colors
 
@@ -139,16 +139,14 @@ class MazeMaker(object):
             del posibles[3]
 
         for p in posibles:
-            try:
-                if p[1] < 0 or p[0] < 0:
-                    posibles.remove(p)
-                # if p[0] > (self.max_x + 40):      # Cant go more right
-                #     posibles.remove(p)
-                # if p[1] > (self.max_y ):      # Cant go more up
-                    posibles.remove(p)
-            except ValueError:
-                # Delete 2 times
-                pass
+           
+            if p[1] < 0 or p[0] < 0:
+                posibles.remove(p)
+            # if p[0] > (self.max_x + 40):      # Cant go more right
+            #     posibles.remove(p)
+            # if p[1] > (self.max_y ):      # Cant go more up
+            #   posibles.remove(p)
+
 
         # Exceptions of already visted
         for m in self.matrix:
@@ -179,13 +177,13 @@ class MazeMaker(object):
 
             N += 1
 
-            # Get stack top
-            try:
-                point = self.stack[-1]
-            except IndexError:
-                # Nothing in stack but posible choices
+            # If we are recursing to 0 to find a posible neighbour
+            if len(self.stack) == 0:
                 self.fill_choices()
                 break
+            else:
+                # Get stack top
+                point = self.stack[-1]
 
             # Neighbors of point
             neighbors = self.get_neighbors(point)
@@ -220,7 +218,7 @@ class MazeMaker(object):
                     break
 
             # Choose another random nehbor (wall)
-            try:
+            if neighbors:
                 neighbor = random.choice(neighbors)
                 for m in self.matrix:
                     if m[0] == neighbor[0] and m[1] == neighbor[1]:
@@ -229,12 +227,10 @@ class MazeMaker(object):
                         self.ge.paint_pixel(m[0], m[1], 'red')
                         self.choice_count += 1
                         break
-            except IndexError:
-                # Cant choose another random element
-                pass
+       
 
             #self.ge.c.addstr(0, 0, str(point) + ' %s' % str(N) + str(neighbors)+ 'max_x =' + str(self.max_x) + ', max_y' + str(self.max_y))
-            self.ge.loop()
+            #self.ge.loop()
 
 
 
@@ -251,6 +247,8 @@ def main(c):
     ge.create_rgb_color('green', 0, 255, 0)
 
     mm.generate_maze()
+    # print('MAZE GENERATED')
+    #time.sleep(10)
 
     # Intinite loop
     while True:
